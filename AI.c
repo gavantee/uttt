@@ -5,6 +5,10 @@
 #include <math.h>
 #include <stdio.h>
 #include <string.h>
+#include <ncurses.h>
+
+#include "board.h"
+#include "cli.h"
 
 #define OUTPUT   0
 #define EXP_C    2          /* exploration constant za monte carla */
@@ -25,7 +29,6 @@ static double heur3(Board *b, int player);
 static double heur4(Board *b, int player);
 static double heurn(Board *b, int player, int heur);
 static MCTree *MCcleanup(MCTree *root, int i);
-static void MCSim(Board *b, MCTree *root, int n);
 static int minimaxMove(Board *b, int player, int depth, int heur,
         double alpha, double beta);
 static double minimaxMoveCalc(Board *b, int player, int depth, int heur,
@@ -235,6 +238,7 @@ heurn(Board *b, int player, int n)
     case 4:
         return heur4(b, player);
     }
+    return 0;
 }
 
 double
@@ -406,17 +410,17 @@ expandMCTree(Board *b, MCTree *root)
     if (b->win)
         return root;
     if (root->maxn==0 && moves) {
-        root->down=calloc(1, sizeof(MCTree *));
+        root->down= (MCTree **) calloc(1, sizeof(MCTree *));
         if (root->down==NULL)
             return root;
         root->maxn=moves[0];
         root->n=1;
     } else {
-        tmp=realloc(root->down, ++(root->n)*sizeof(MCTree *));
+        tmp=(MCTree **)realloc(root->down, ++(root->n)*sizeof(MCTree *));
         if (tmp)
             root->down=tmp;
     }
-    root->down[root->n-1]=calloc(1, sizeof(MCTree));
+    root->down[root->n-1]= (MCTree *) calloc(1, sizeof(MCTree));
     if (root->down[root->n-1]==NULL)
         return root;
     root->down[root->n-1]->move=moves[root->n];
@@ -451,7 +455,7 @@ AIMonteCarloMove2(Board *b, int player, MCTree *root, double t)
     if (p!=player)
         return NULL;
     if (root==NULL) {
-        root=calloc(1, sizeof(MCTree));
+        root= (MCTree *) calloc(1, sizeof(MCTree));
         if (root==NULL)
             exit(1);
         root->down=NULL;
@@ -469,7 +473,7 @@ AIMonteCarloMove2(Board *b, int player, MCTree *root, double t)
             root=MCcleanup(root, root->n);
     }
     if (root==NULL)
-        root=calloc(1, sizeof(MCTree));
+        root= (MCTree *) calloc(1, sizeof(MCTree));
     if (root==NULL)
         exit(1);
     while (1.0*(clock()-start)/CLOCKS_PER_SEC<t)
@@ -527,12 +531,12 @@ MCcleanup(MCTree *root, int i)
 void
 AIMove1(Board *b, int player, double t)
 {
-    clock_t start, end;
-    int *moves=allMoves(b), *wins, n, tmp, max=0, maxmove, maxi;
+    clock_t start;
+    int *moves=allMoves(b), *wins, tmp, max=0, maxmove, maxi;
     if (player!=b->playerOnTurn)
         return;
     start=clock();
-    wins=calloc(moves[0]+1, sizeof(int));
+    wins=(int *)calloc(moves[0]+1, sizeof(int));
     if (wins==NULL)
         exit(1);
     for (int i=0; 1.0*(clock()-start)/CLOCKS_PER_SEC<t; ++i) {

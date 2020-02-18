@@ -5,9 +5,9 @@
 #include <unistd.h>
 #include <ncurses.h>
 
-#include "AI.c"
-#include "board.c"
-#include "cli.c"
+#include "board.h"
+#include "AI.h"
+#include "cli.h"
 
 #define FILENAME "file.txt"
 
@@ -68,7 +68,7 @@ main(int argc, char *argv[])
     if (argc>5)
         time2=atof(argv[5]);
 
-    board=calloc(1, sizeof(Board));
+    board=(Board *)calloc(1, sizeof(Board));
     resetBoard(board);
     initHeurVal();
 

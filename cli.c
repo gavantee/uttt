@@ -3,6 +3,8 @@
 #include <stdlib.h>
 
 #include "board.h"
+#include "AI.h"
+
 #include "cli.h"
 
 #define SAVEFILE "save.txt"
@@ -15,7 +17,7 @@ cliPlayerMove(Board *b, int player, int *cY, int *cX)
         return;
     curs_set(1);
     wmove(stdscr, *cY, *cX);
-    while (ch=getch()) {
+    while ((ch=getch()) != 'q') {
         switch(ch)
         {
         case 'a': case KEY_LEFT: case 'h':

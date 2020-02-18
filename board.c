@@ -20,7 +20,7 @@ allMoves(Board *b)
                 if (b->tiles[i][j]==0)
                     tmp[count++]=i*9+j;
     }
-    res=calloc(count+1, sizeof(int));
+    res=(int *)calloc(count+1, sizeof(int));
     if (res==NULL)
         exit(1);
     for (int i=1; i<count+1; ++i)
@@ -32,7 +32,7 @@ allMoves(Board *b)
 Board *
 boardcpy(Board *b)
 {
-    Board *b2=calloc(1, sizeof(Board));
+    Board *b2=(Board *)calloc(1, sizeof(Board));
     for (int i=0; i<9; ++i)
         for (int j=0; j<9; ++j)
             b2->tiles[i][j]=b->tiles[i][j];
