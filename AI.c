@@ -12,8 +12,8 @@
 
 #define OUTPUT   0
 #define EXP_C    2          /* exploration constant za monte carla */
-#define DEBUG    1
-#define INF      1000000000 /* ovo je sasvim dovoljno */
+#define DEBUG    0
+#define INF      (1<<30) - 1
 #define BFACTOR  6.5        /* branching factor */
 #define FILENAME "file.txt" /* fajl za i/o poteza */
 
